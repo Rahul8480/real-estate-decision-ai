@@ -1,42 +1,30 @@
 """
-Generates human-readable AI decision reports in Markdown format.
+Generates formatted reports from AI results.
 """
 
 from datetime import date
 
 def generate_markdown_report(results: list) -> str:
-    today = date.today().isoformat()
-    lines = [
-        f"# Real Estate AI Decision Report — {today}",
-        "",
-        f"Total Decisions: {len(results)}",
-        "",
-        "---",
-        ""
-    ]
+    report_lines = ["# Real Estate AI Daily Report", ""]
+    report_lines.append(f"Generated on: {date.today().isoformat()}")
+    report_lines.append("")
+
+    if not results:
+        report_lines.append("No decisions generated for today.")
+        return "\n".join(report_lines)
 
     for i, r in enumerate(results, 1):
-        lines.extend([
-            f"## Decision {i}: {r['location']}",
+        report_lines.extend([
+            f"## Decision {i}: {r.get('location', 'N/A')}",
             "",
-            f"**Observation:** {r['observation']}",
-            "",
-            f"**Fact:** {r['fact']}",
-            "",
-            f"**Insight:** {r['insight'] or 'No derived insight (deterministic mode)'}",
-            "",
-            f"**Assumption:** {r['assumption']}",
-            "",
-            f"**Risk:** {r['risk']}",
-            "",
-            f"**Risk Note:** {r['risk_note']}",
-            "",
-            f"**Confidence:** {r['confidence']}/100",
-            "",
-            f"**Strategy:** {r['strategy']}",
-            "",
+            f"**Observation:** {r.get('observation', 'N/A')}",
+            f"**Insight:** {r.get('insight', 'N/A')}",
+            f"**Assumptions:** {r.get('assumption', 'N/A')}",
+            f"**Risk:** {r.get('risk', 'Not specified')} ({r.get('risk_note', 'N/A')})",
+            f"**Confidence:** {r.get('confidence', 'N/A')}/100",
+            f"**Strategy:** {r.get('strategy', 'N/A')}",
             "---",
             ""
         ])
 
-    return "\n".join(lines)
+    return "\n".join(report_lines)
