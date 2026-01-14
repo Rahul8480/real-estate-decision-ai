@@ -8,16 +8,17 @@ from datetime import datetime
 # Ensure repo path is available
 sys.path.append("/content/real-estate-decision-ai")
 
-from pipelines.batch_runner import run_batch_from_sheet # Import the new function
+# Import the batch runner that loads from CSV
+from pipelines.batch_runner import run_batch
 
-# Define the Google Sheet ID
-SHEET_ID = "1h_KJ1apOVmW-6IbksC2HupobKkcz7R2JxbBVALWvWUw" # Replace with your actual sheet ID if different
+# Define the path to the local CSV input
+CSV_INPUT_PATH = "/content/real-estate-decision-ai/data/sample_inputs.csv"
 
 def main():
-    print(f"[{datetime.now()}] Starting daily AI run from Google Sheet...")
+    print(f"[{datetime.now()}] Starting daily AI run from local CSV...")
 
-    results = run_batch_from_sheet(
-        sheet_id=SHEET_ID,
+    results = run_batch(
+        csv_path=CSV_INPUT_PATH,
         save_report=True
     )
 
