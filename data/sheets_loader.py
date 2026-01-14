@@ -1,21 +1,17 @@
 """
-Google Sheets loader for Real Estate AI.
+Loads data from Google Sheets.
 """
 
 import pandas as pd
-import gspread
-from google.colab import auth
-from google.auth import default
 
-def load_sheet_as_dataframe(sheet_id: str, worksheet_name: str = None) -> pd.DataFrame:
-    # Authenticate user to Google Drive and Sheets
-    auth.authenticate_user()
-    creds, _ = default()
-    client = gspread.authorize(creds)
-
-    sheet = client.open_by_key(sheet_id)
-
-    worksheet = sheet.worksheet(worksheet_name) if worksheet_name else sheet.sheet1
-
-    data = worksheet.get_all_records()
-    return pd.DataFrame(data)
+def load_sheet_as_dataframe(sheet_id: str) -> pd.DataFrame:
+    sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+    df = pd.read_csv(sheet_url)
+    # Ensure consistent column names expected by run_daily_ai
+    df = df.rename(columns={
+        "City – Micro Location": "location",
+        "Observation": "observation",
+        "Confidence (0–100)": "base_confidence",
+        "Outcome (later)": "outcome"
+    })
+    return df

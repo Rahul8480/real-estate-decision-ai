@@ -5,11 +5,11 @@ Exports Markdown + JSON.
 
 from datetime import date
 from .daily_runner import run_daily_ai
-from reports.report_generator import generate_markdown_report
-from reports.json_exporter import export_results_to_json
+from reports.report_generator import generate_markdown_report # Assuming this exists
+from reports.json_exporter import export_results_to_json # Assuming this exists
 from data.sheets_loader import load_sheet_as_dataframe
 
-OUTPUT_DIR = "/content/real-estate-decision-ai/reports"
+OUTPUT_DIR = "reports"
 
 def run_batch_from_sheet(sheet_id: str, save_outputs: bool = True):
     df = load_sheet_as_dataframe(sheet_id)
