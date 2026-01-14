@@ -1,23 +1,37 @@
 """
-Batch processing pipeline.
-Reads from a Google Sheet and runs daily AI for each entry.
+Batch runner using Google Sheets as live input.
+Exports Markdown + JSON.
 """
 
-import pandas as pd
-from pipelines.daily_runner import run_daily_ai
+from datetime import date
+from .daily_runner import run_daily_ai
+from reports.report_generator import generate_markdown_report
+from reports.json_exporter import export_results_to_json
+from data.sheets_loader import load_sheet_as_dataframe
 
-def run_batch_from_sheet(sheet_id: str, save_report: bool = False):
-    sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
-    df = pd.read_csv(sheet_url)
+OUTPUT_DIR = "/content/real-estate-decision-ai/reports"
 
-    all_results = []
+def run_batch_from_sheet(sheet_id: str, save_outputs: bool = True):
+    df = load_sheet_as_dataframe(sheet_id)
+    results = []
 
     for _, row in df.iterrows():
         result = run_daily_ai(
-            observation=row["Observation"], # Corrected column name
-            base_confidence=int(row["Confidence (0–100)"]), # Corrected column name
-            outcome=row.get("Outcome (later)") # Use .get for optional column
+            location=row["location"],
+            observation=row["observation"],
+            base_confidence=int(row["base_confidence"]),
+            outcome=row.get("outcome") or None
         )
-        all_results.append(result)
+        results.append(result)
 
-    return all_results
+    if save_outputs:
+        # Markdown report
+        report = generate_markdown_report(results)
+        md_path = f"{OUTPUT_DIR}/report_{date.today().isoformat()}.md"
+        with open(md_path, "w") as f:
+            f.write(report)
+
+        # JSON output
+        export_results_to_json(results, OUTPUT_DIR)
+
+    return results
