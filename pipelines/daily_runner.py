@@ -8,7 +8,7 @@ from core.confidence import apply_confidence_decay, learned_confidence
 from core.risk_engine import register_risk, compare_risk_with_history
 from core.strategy import generate_strategy
 
-def run_daily_ai(observation: str, base_confidence: int, outcome: str = None):
+def run_daily_ai(location: str, observation: str, base_confidence: int, outcome: str = None):
     """
     Run one full AI decision cycle.
     """
@@ -33,6 +33,7 @@ def run_daily_ai(observation: str, base_confidence: int, outcome: str = None):
 
     # Final decision object
     return {
+        "location": location,
         "observation": observation,
         "fact": reasoning["fact"],
         "insight": reasoning["insight"],
