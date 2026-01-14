@@ -17,7 +17,6 @@ def run_batch_from_sheet(sheet_id: str, save_outputs: bool = True):
 
     for _, row in df.iterrows():
         result = run_daily_ai(
-            location=row["location"],
             observation=row["observation"],
             base_confidence=int(row["base_confidence"]),
             outcome=row.get("outcome") or None
